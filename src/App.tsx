@@ -3,20 +3,14 @@ import './App.css'
 import { useEffect, useState } from 'react'
 import AddToDoModal from './Components/AddToDoModal'
 import Notif from './Components/Notif'
+import { FaArrowDown } from 'react-icons/fa'
 
 export type ToDoListProp = {
   name: string,
   status: ToDoListStatus
 }
 const ToDoListData: ToDoListProp[] = [
-  {
-    name: 'Test 1',
-    status: 'Done'
-  },
-  {
-    name: 'Test 2',
-    status: 'Ongoing'
-  },
+ 
 ]
 
 function App() {
@@ -100,6 +94,7 @@ const ToDoListBoard = ({ addNewToDoList } : ToDoListBoardProp) => {
   return(
     <ul className='flex flex-col gap-8'>
         {
+          list.length ? 
           list.map((toDoList, index) => 
             <ToDoListListComponent
               key={index}
@@ -108,7 +103,11 @@ const ToDoListBoard = ({ addNewToDoList } : ToDoListBoardProp) => {
               onToggleStatus={() => changeToDoListListStatus(index)}
               requestDeleteToDoList={() => removeToDoList(index)}
             />
-          )
+          ) :
+          <div className='flex flex-col items-center'>
+            <p>Try adding new list</p>
+            <FaArrowDown />
+          </div>
         }
     </ul>
   )
