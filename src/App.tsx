@@ -4,14 +4,13 @@ import { useEffect, useState } from 'react'
 import AddToDoModal from './Components/AddToDoModal'
 import Notif from './Components/Notif'
 import { FaArrowDown } from 'react-icons/fa'
+import localStorageHelper from './helper/localStorageHelper'
 
 export type ToDoListProp = {
   name: string,
   status: ToDoListStatus
 }
-const ToDoListData: ToDoListProp[] = [
- 
-]
+const ToDoListData: ToDoListProp[] = [];
 
 function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,7 +43,7 @@ function App() {
     setAddNewToDoList({
       data: value,
       status: true
-    })
+    });
   }
 
   return (
@@ -78,16 +77,28 @@ const ToDoListBoard = ({ addNewToDoList } : ToDoListBoardProp) => {
   };
 
   const removeToDoList = (index: number) => {
-    setList(list.filter((_, i) => index !== i))
+    setList(() => {
+      const newList = list.filter((_, i) => index !== i);
+      localStorageHelper().saveToDoList(newList);
+      return newList;
+    })
   }
 
   useEffect(() => {
-    setList(ToDoListData);
+    const savedData = localStorageHelper().getToDoList();
+    if(savedData)
+      setList(JSON.parse(savedData));
+    else
+      setList(ToDoListData);
   }, []);
 
   useEffect(() => {
     if(addNewToDoList.status === true){
-      setList([...list, { name: addNewToDoList.data.name, status: addNewToDoList.data.status }])
+      setList(() => {
+        const newList = [...list, { name: addNewToDoList.data.name, status: addNewToDoList.data.status }]
+        localStorageHelper().saveToDoList(newList);
+        return newList
+      });
     }
   }, [addNewToDoList])
 
