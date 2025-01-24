@@ -83,6 +83,10 @@ const ToDoListBoard = ({ addNewToDoList } : ToDoListBoardProp) => {
     });
   };
 
+  const removeToDoList = (index: number) => {
+    setList(list.filter((_, i) => index !== i))
+  }
+
   useEffect(() => {
     setList(ToDoListData);
   }, []);
@@ -102,6 +106,7 @@ const ToDoListBoard = ({ addNewToDoList } : ToDoListBoardProp) => {
               name={toDoList.name} 
               status={toDoList.status} 
               onToggleStatus={() => changeToDoListListStatus(index)}
+              requestDeleteToDoList={() => removeToDoList(index)}
             />
           )
         }
@@ -113,18 +118,23 @@ type ToDoListStatus = 'Done' | 'Ongoing';
 type ToDoListListComponentProp = {
   name: string,
   status: ToDoListStatus,
-  onToggleStatus: () => void
+  onToggleStatus: () => void,
+  requestDeleteToDoList: () => void
 }
-const ToDoListListComponent = ({name, status, onToggleStatus} : ToDoListListComponentProp) => {
+const ToDoListListComponent = ({name, status, onToggleStatus, requestDeleteToDoList} : ToDoListListComponentProp) => {
   const handleOnClick = () => {
     onToggleStatus();
   };
+
+  const onDeleteClicked = () => {
+    requestDeleteToDoList();
+  }
 
   return (
     <div className='flex justify-between items-center min-w-sm'>
       <input type='checkbox' onChange={handleOnClick} checked={status === 'Done' ? true : false}/>
       <li className={`${status === 'Done' ? 'line-through' : ''} text-4xl`}>{name}</li>
-      <button>
+      <button onClick={onDeleteClicked}>
         <GoTrash className='text-white text-2xl' width={200} height={200}/>
       </button>
     </div>
